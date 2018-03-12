@@ -1,0 +1,31 @@
+{
+  "Vendor": true,
+  "Exclude": [
+    "should have comment",
+    "comment on exported const"
+  ],
+  "Sort": ["path", "line"],
+  "Deadline": "300s",
+  "Enable": [
+    "deadcode",
+    "errcheck",
+    "gas",
+    "goconst",
+    "gofmt",
+    "goimports",
+    "golint",
+    "gosimple",
+    "staticcheck",
+    "structcheck",
+    "unused",
+    "varcheck",
+    "vet",
+    "vetshadow",
+    "gotype",
+    "ineffassign",
+    "interfacer",
+    "unconvert",
+    "misspell",
+    "unparam"
+  ]
+}
