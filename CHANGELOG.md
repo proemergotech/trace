@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.1.2 / 2018-03-28
+- do not mark the span as failed when trace not found
+- add a "start.ignored" tag, when a Start option provided, but the incoming request/event has trace information too
+
 ## 0.1.1 / 2018-03-19
 - added option to start trace from gin and gebOnEvent middlewares
 
