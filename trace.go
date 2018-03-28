@@ -15,6 +15,7 @@ const (
 	WorkflowIDField      = "x_workflow_id"
 	WorkflowIDMissing    = "x_workflow_id.missing"
 	SpanMissingTag       = "span.missing"
+	StartIgnoredTag      = "start.ignored"
 )
 
 type correlationKey struct{}

@@ -113,14 +113,13 @@ func OnEventMiddleware(tracer opentracing.Tracer, logger trace.Logger, options .
 		defer span.Finish()
 
 		if s.start && err == nil {
-			err = errors.New("Trace found, ignoring Start: "+msg)
+			err = errors.New("Trace found, ignoring Start: " + msg)
 			logger.Error(ctx, err.Error(), "error", err)
-			trace.Error(span, err)
-		} else if !s.start && err != nil{
+			span.SetTag(trace.StartIgnoredTag, true)
+		} else if !s.start && err != nil {
 			err = errors.Wrap(err, "No trace: "+msg)
 			logger.Error(ctx, err.Error(), "error", err)
 			span.SetTag(trace.SpanMissingTag, true)
-			trace.Error(span, err)
 		}
 
 		trace.AddCorrelationTags(span, cor)
