@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.1.3 / 2018-04-03
+- removed version contraint from geb-client dependency
+
 ## 0.1.2 / 2018-03-28
 - do not mark the span as failed when trace not found
 - add a "start.ignored" tag, when a Start option provided, but the incoming request/event has trace information too

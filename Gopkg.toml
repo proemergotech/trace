@@ -1,4 +1,3 @@
 [[constraint]]
   name = "gitlab.com/proemergotech/geb-client-go"
   source = "git@gitlab.com:proemergotech/geb-client-go.git"
-  version = "0.4.1"
