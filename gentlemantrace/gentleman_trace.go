@@ -16,8 +16,6 @@ import (
 // If there's no parent context, it will start a new root span and adds the 'span.missing' tag to the span.
 // It will also add correlation and http related tags, like the http method, status code etc..
 func Middleware(tracer opentracing.Tracer, logger trace.Logger) plugin.Plugin {
-	var span opentracing.Span
-
 	before := func(gCtx *gcontext.Context, handler gcontext.Handler) {
 		defer handler.Next(gCtx)
 
@@ -43,7 +41,7 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger) plugin.Plugin {
 			opts = append(opts, opentracing.ChildOf(parent.Context()))
 		}
 
-		span = tracer.StartSpan(
+		span := tracer.StartSpan(
 			msg,
 			opts...,
 		)
@@ -65,6 +63,7 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger) plugin.Plugin {
 	after := func(gCtx *gcontext.Context, handler gcontext.Handler) {
 		defer handler.Next(gCtx)
 
+		span := opentracing.SpanFromContext(gCtx.Request.Context())
 		if span == nil {
 			return
 		}
