@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.1.6 / 2018-06-05
+- fixed NewCorrelationID
+
 ## 0.1.5 / 2018-06-05
 - added NewCorrelation and NewCorrelationID methods 
 

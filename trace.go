@@ -63,7 +63,7 @@ func NewCorrelation() *Correlation {
 
 // NewCorrelationID generates a new correlation id consisting of 32 random hexadecimal characters.
 func NewCorrelationID() string {
-	b := make([]byte, 0, 16)
+	b := make([]byte, 16)
 	if _, err := rand.Read(b); err != nil {
 		panic(err)
 	}
