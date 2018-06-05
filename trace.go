@@ -2,6 +2,8 @@ package trace
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -50,6 +52,23 @@ func (cl contextMapper) Values(ctx context.Context) map[string]string {
 		CorrelationIDField: cor.CorrelationID,
 		WorkflowIDField:    cor.WorkflowID,
 	}
+}
+
+// NewCorrelation returns a new Correlation object with generated CorrelationID and empty WorkflowID.
+func NewCorrelation() *Correlation {
+	return &Correlation{
+		CorrelationID: NewCorrelationID(),
+	}
+}
+
+// NewCorrelationID generates a new correlation id consisting of 32 random hexadecimal characters.
+func NewCorrelationID() string {
+	b := make([]byte, 0, 16)
+	if _, err := rand.Read(b); err != nil {
+		panic(err)
+	}
+
+	return hex.EncodeToString(b)
 }
 
 // WithCorrelation create a new context with the passed correlation in it.

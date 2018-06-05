@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.1.5 / 2018-06-05
+- added NewCorrelation and NewCorrelationID methods 
+
 ## 0.1.4 / 2018-04-19
 - fixed sharing a span reference between all gentleman requests
 
