@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.1.7 / 2018-06-21
+- added Echo web framework tracer.
+
 ## 0.1.6 / 2018-06-05
 - fixed NewCorrelationID
 
