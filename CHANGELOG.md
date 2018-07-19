@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.1.8 / 2018-07-19
+- fixed echo tracer not adding context to request
+
 ## 0.1.7 / 2018-06-21
 - added Echo web framework tracer.
 

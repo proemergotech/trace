@@ -66,7 +66,7 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 			ext.HTTPUrl.Set(span, req.URL.String())
 
 			ctx = opentracing.ContextWithSpan(ctx, span)
-			eCtx.Request().WithContext(ctx)
+			eCtx.SetRequest(req.WithContext(ctx))
 
 			defer func() {
 				if err := recover(); err != nil {
