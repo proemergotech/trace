@@ -7,6 +7,7 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -20,6 +21,19 @@ const (
 	StartIgnoredTag      = "start.ignored"
 )
 
+const (
+	// When parent trace not found, it will start a new root span, without any warning log.
+	Start Option = iota
+	// When parent trace not found, it will start a new root span and create warning log, that we don't found a parent.
+	// This is the default behaviour.
+	StartWithWarning
+	// When parent trace not found, it won't start a root span and doesn't log any warning
+	Ignore
+	validationEnd
+)
+
+type Option uint8
+
 type correlationKey struct{}
 type contextMapper struct{}
 
@@ -28,9 +42,18 @@ type Correlation struct {
 	WorkflowID    string
 }
 
+func ValidateOption(t Option) error {
+	if t >= validationEnd {
+		return errors.Errorf("invalid option %v", t)
+	}
+
+	return nil
+}
+
 // Logger is a simplified interface for logging, mainly used to decouple tracing from logging.
 type Logger interface {
 	Error(ctx context.Context, msg string, keysAndValues ...interface{})
+	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
 }
 
 // ContextMapper used to extract values from a context.

@@ -1,16 +1,20 @@
 package gintrace
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/pkg/errors"
 	"gitlab.com/proemergotech/trace-go"
+	"gitlab.com/proemergotech/trace-go/internal"
 )
 
 type settings struct {
-	start  bool
-	corGen func() *trace.Correlation
+	genCor   bool
+	genCorFn func() *trace.Correlation
+	trace    trace.Option
 }
 
 type Option func(*settings)
@@ -21,7 +25,9 @@ type Option func(*settings)
 // It will also add correlation and http related tags, like the http method, status code etc..
 // If an error happens or one of the middleware panics, it will mark the span as failed and continue panicking.
 func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Option) gin.HandlerFunc {
-	s := &settings{}
+	s := &settings{
+		trace: trace.StartWithWarning,
+	}
 	for _, opt := range options {
 		opt(s)
 	}
@@ -35,32 +41,40 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 			CorrelationID: h.Get(trace.CorrelationIDHeader),
 			WorkflowID:    h.Get(trace.WorkflowIDHeader),
 		}
-		if cor.CorrelationID == "" && s.start {
-			cor = s.corGen()
+
+		if cor.CorrelationID == "" {
+			if s.genCor {
+				cor = s.genCorFn()
+			} else {
+				httpErr := internal.CorrelationIDMissing()
+				logger.Error(ctx, httpErr.Error.Error(), "error", errors.WithStack(&httpErr.Error), "method", req.Method, "url", req.URL.String())
+				gCtx.AbortWithStatusJSON(http.StatusBadRequest, httpErr)
+				return
+			}
 		}
 		ctx = trace.WithCorrelation(ctx, cor)
 
-		msg := "HTTP in: [" + req.Method + "] " + req.URL.Path
-		opts := []opentracing.StartSpanOption{ext.SpanKindConsumer}
 		spanCtx, err := tracer.Extract(opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(h))
+
+		// no parent trace, but no need to start, so just ignore tracing at all
+		if err != nil && s.trace == trace.Ignore {
+			gCtx.Next()
+			return
+		}
+
+		opts := []opentracing.StartSpanOption{ext.SpanKindConsumer}
 		if err == nil {
 			opts = append(opts, opentracing.ChildOf(spanCtx))
 		}
 
-		span := tracer.StartSpan(
-			msg,
-			opts...,
-		)
+		msg := "HTTP in: [" + req.Method + "] " + req.URL.Path
+		span := tracer.StartSpan(msg, opts...)
 		defer span.Finish()
 
-		if s.start && err == nil {
-			err = errors.New("Trace found, ignoring Start: " + msg)
-			logger.Error(ctx, err.Error(), "error", err)
+		if err != nil && s.trace == trace.StartWithWarning {
+			err = errors.New("No trace: " + msg)
+			logger.Warn(ctx, err.Error(), "error", err)
 			span.SetTag(trace.StartIgnoredTag, true)
-		} else if !s.start && err != nil {
-			err = errors.Wrap(err, "No trace: "+msg)
-			logger.Error(ctx, err.Error(), "error", err)
-			span.SetTag(trace.SpanMissingTag, true)
 		}
 
 		trace.AddCorrelationTags(span, cor)
@@ -73,9 +87,9 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 
 		defer func() {
 			ext.HTTPStatusCode.Set(span, uint16(gCtx.Writer.Status()))
-
-			for _, e := range gCtx.Errors {
-				trace.Error(span, e.Err)
+			if len(gCtx.Errors) != 0 {
+				// at least add the first error, others will be logged
+				trace.Error(span, gCtx.Errors[1])
 			}
 
 			if err := recover(); err != nil {
@@ -88,12 +102,24 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 	}
 }
 
-// Start option can be passed to Middleware to start the tracing
-// instead of following it from a previous trace based on the http headers.
+// GenerateCorrelation option can be passed to Middleware to generate correlation when it's missing.
 // A generator function is required for generation the Correlation object when starting a trace.
-func Start(gen func() *trace.Correlation) Option {
+// Usually just use trace.NewCorrelation.
+func GenerateCorrelation(gen func() *trace.Correlation) Option {
 	return func(opts *settings) {
-		opts.start = true
-		opts.corGen = gen
+		opts.genCor = true
+		opts.genCorFn = gen
 	}
+}
+
+// Trace option can be passed to Middleware to handle cases when a parent trace not found.
+// Check the possible options for more information.
+func Trace(option trace.Option) (Option, error) {
+	if err := trace.ValidateOption(option); err != nil {
+		return nil, err
+	}
+
+	return func(opts *settings) {
+		opts.trace = option
+	}, nil
 }

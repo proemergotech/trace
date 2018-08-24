@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.2.0 / 2018-09-24
+- throw error if the correlation id missing from header or context
+
 ## 0.1.8 / 2018-07-19
 - fixed echo tracer not adding context to request
 

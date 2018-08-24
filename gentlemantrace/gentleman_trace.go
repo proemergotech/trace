@@ -7,6 +7,7 @@ import (
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/pkg/errors"
 	"gitlab.com/proemergotech/trace-go"
+	"gitlab.com/proemergotech/trace-go/internal"
 	"gopkg.in/h2non/gentleman.v2"
 	gcontext "gopkg.in/h2non/gentleman.v2/context"
 	"gopkg.in/h2non/gentleman.v2/plugin"
@@ -17,13 +18,18 @@ import (
 // It will also add correlation and http related tags, like the http method, status code etc..
 func Middleware(tracer opentracing.Tracer, logger trace.Logger) plugin.Plugin {
 	before := func(gCtx *gcontext.Context, handler gcontext.Handler) {
-		defer handler.Next(gCtx)
-
 		req := gCtx.Request
 		ctx := req.Context()
 		h := req.Header
 
 		cor := trace.CorrelationFrom(ctx)
+		if cor.CorrelationID == "" {
+			err := errors.New(internal.MissingFromContext)
+			logger.Error(ctx, err.Error(), "error", err, "method", req.Method, "url", req.URL.String())
+			handler.Error(gCtx, err)
+			return
+		}
+
 		h.Add(trace.CorrelationIDHeader, cor.CorrelationID)
 		h.Add(trace.WorkflowIDHeader, cor.WorkflowID)
 
@@ -59,6 +65,8 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger) plugin.Plugin {
 
 		req = req.WithContext(ctx)
 		gCtx.Request = req
+
+		handler.Next(gCtx)
 	}
 	after := func(gCtx *gcontext.Context, handler gcontext.Handler) {
 		defer handler.Next(gCtx)
