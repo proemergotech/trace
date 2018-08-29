@@ -89,7 +89,7 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 			ext.HTTPStatusCode.Set(span, uint16(gCtx.Writer.Status()))
 			if len(gCtx.Errors) != 0 {
 				// at least add the first error, others will be logged
-				trace.Error(span, gCtx.Errors[1])
+				trace.Error(span, gCtx.Errors[0])
 			}
 
 			if err := recover(); err != nil {
