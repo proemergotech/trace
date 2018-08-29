@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.2.1 / 2018-09-29
+- fix index out of range error in gin trace
+
 ## 0.2.0 / 2018-09-24
 - throw error if the correlation id missing from header or context
 
