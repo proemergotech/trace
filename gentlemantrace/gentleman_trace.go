@@ -13,10 +13,23 @@ import (
 	"gopkg.in/h2non/gentleman.v2/plugin"
 )
 
+type settings struct {
+	trace trace.Option
+}
+
+type Option func(*settings)
+
 // Middleware return middleware which will extract the trace context from headers and starts a new child span.
 // If there's no parent context, it will start a new root span and adds the 'span.missing' tag to the span.
 // It will also add correlation and http related tags, like the http method, status code etc..
-func Middleware(tracer opentracing.Tracer, logger trace.Logger) plugin.Plugin {
+func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Option) plugin.Plugin {
+	s := &settings{
+		trace: trace.StartWithWarning,
+	}
+	for _, opt := range options {
+		opt(s)
+	}
+
 	before := func(gCtx *gcontext.Context, handler gcontext.Handler) {
 		req := gCtx.Request
 		ctx := req.Context()
@@ -36,8 +49,14 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger) plugin.Plugin {
 		msg := "HTTP out: [" + req.Method + "] " + req.URL.Path
 		opts := []opentracing.StartSpanOption{ext.SpanKindRPCClient}
 		if parent := opentracing.SpanFromContext(ctx); parent == nil {
-			err := errors.New("No trace: " + msg)
-			logger.Error(ctx, err.Error(), "error", err)
+			if s.trace == trace.Ignore {
+				handler.Next(gCtx)
+				return
+			}
+			if s.trace == trace.StartWithWarning {
+				err := errors.New("No trace: " + msg)
+				logger.Warn(ctx, err.Error(), "error", err)
+			}
 
 			opts = append(opts, opentracing.Tag{
 				Key:   trace.SpanMissingTag,
@@ -100,4 +119,16 @@ func WithContext(ctx context.Context, req *gentleman.Request) *gentleman.Request
 	req.Context.Request = req.Context.Request.WithContext(ctx)
 
 	return req
+}
+
+// Trace option can be passed to Middleware to handle cases when a parent trace not found.
+// Check the possible options for more information.
+func Trace(option trace.Option) (Option, error) {
+	if err := trace.ValidateOption(option); err != nil {
+		return nil, err
+	}
+
+	return func(opts *settings) {
+		opts.trace = option
+	}, nil
 }
