@@ -1,5 +1,11 @@
 # Release Notes
 
+## 0.2.3 / 2019-07-19
+- shortened echo, gin & gentleman trace spans for easier usage in operations filter 
+
+## 0.2.2 / 2019-06-12
+- added trace handling options to gentleman middleware
+
 ## 0.2.1 / 2018-09-29
 - fix index out of range error in gin trace
 
