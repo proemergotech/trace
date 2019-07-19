@@ -2,6 +2,7 @@ package gintrace
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
@@ -67,7 +68,12 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 			opts = append(opts, opentracing.ChildOf(spanCtx))
 		}
 
-		msg := "HTTP in: [" + req.Method + "] " + req.URL.Path
+		matchedRoute := gCtx.Request.URL.String()
+		for _, p := range gCtx.Params {
+			matchedRoute = strings.Replace(matchedRoute, p.Value, ":"+p.Key, 1)
+		}
+
+		msg := "HTTP in: [" + req.Method + "] " + matchedRoute
 		span := tracer.StartSpan(msg, opts...)
 		defer span.Finish()
 

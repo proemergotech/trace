@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"gitlab.com/proemergotech/trace-go"
 	"gitlab.com/proemergotech/trace-go/internal"
+	
 	"gopkg.in/h2non/gentleman.v2"
 	gcontext "gopkg.in/h2non/gentleman.v2/context"
 	"gopkg.in/h2non/gentleman.v2/plugin"
@@ -46,7 +47,7 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 		h.Add(trace.CorrelationIDHeader, cor.CorrelationID)
 		h.Add(trace.WorkflowIDHeader, cor.WorkflowID)
 
-		msg := "HTTP out: [" + req.Method + "] " + req.URL.Path
+		msg := "HTTP out: [" + req.Method + "] " + req.Host
 		opts := []opentracing.StartSpanOption{ext.SpanKindRPCClient}
 		if parent := opentracing.SpanFromContext(ctx); parent == nil {
 			if s.trace == trace.Ignore {

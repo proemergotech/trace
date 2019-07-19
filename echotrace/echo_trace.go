@@ -67,7 +67,7 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 				opts = append(opts, opentracing.ChildOf(spanCtx))
 			}
 
-			msg := "HTTP in: [" + req.Method + "] " + req.URL.Path
+			msg := "HTTP in: [" + req.Method + "] " + eCtx.Path()
 			span := tracer.StartSpan(msg, opts...)
 			defer span.Finish()
 
