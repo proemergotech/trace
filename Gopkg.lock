@@ -110,7 +110,7 @@
   version = "v0.8.1"
 
 [[projects]]
-  digest = "1:b65be636419a7120b18a18ac57ac8676d1604cd2d137b45d250031274701d241"
+  digest = "1:152bb9c7b128f6d8204e1676bb1a79cdaac9b3d40e495048282823ff6f5fb3d4"
   name = "github.com/ugorji/go"
   packages = ["codec"]
   pruneopts = ""
@@ -134,13 +134,13 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:80dc88d04ef4bc4fe2e8a3e07c6fd82106b27769514c4ba7f45f4791d89148e5"
+  digest = "1:8807d98c16aa12607367d6fd8beb731c13c60e390be6307116bd37fa08c5b36a"
   name = "gitlab.com/proemergotech/geb-client-go"
   packages = ["geb"]
   pruneopts = ""
-  revision = "7c77fec665171c3524c1aac0857e81becfcb7d3e"
+  revision = "a8a65873362db49ece7363a9ac7032d100537e1d"
   source = "git@gitlab.com:proemergotech/geb-client-go.git"
-  version = "v0.7.5"
+  version = "v0.7.6"
 
 [[projects]]
   branch = "master"
