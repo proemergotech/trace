@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.3.0 / 2019-12-12
+- use go modules
+- update to echo v4
+- remove gin
+
 ## v0.2.4 / 2019-11-05
 - fix gentleman trace message
 
