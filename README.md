@@ -4,16 +4,11 @@ Trace packages for the different frameworks we use in dliver.
 
 ## Installation
 
-1. Add dependency to dep
-2. Run dep ensure
+1. Add dependency to go mod
+2. Run go build/run/tidy
 
-#### Gopkg.toml
-
-```toml
-[[constraint]]
-  name = "gitlab.com/proemergotech/trace-go"
-  source = "git@gitlab.com:proemergotech/trace-go.git"
-  version = "0.1.0"
+```bash
+go get -u gitlab.com/proemergotech/trace-go v0.3.0
 ```
 
 ## Error logging
@@ -50,5 +45,3 @@ Then open http://localhost:6060/pkg/gitlab.com/proemergotech/trace-go/
 
 - install go
 - check out project to: $GOPATH/src/gitlab.com/proemergotech/log-go
-- install dep
-- run dep ensure
