@@ -2,7 +2,7 @@
 
 ## v1.0.0 / 2020-01-07
 - release version v1.0.0
-- add verify script and ci job
+- add verify script and ci job 
 
 ## v0.3.0 / 2019-12-12
 - use go modules
