@@ -44,4 +44,4 @@ Then open http://localhost:6060/pkg/gitlab.com/proemergotech/trace-go/
 ## Development
 
 - install go
-- check out project to: $GOPATH/src/gitlab.com/proemergotech/log-go
+- check out project to: $GOPATH/src/gitlab.com/proemergotech/trace-go
