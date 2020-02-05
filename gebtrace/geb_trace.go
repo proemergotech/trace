@@ -5,8 +5,8 @@ import (
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/pkg/errors"
 	"gitlab.com/proemergotech/geb-client-go/v2/geb"
-	"gitlab.com/proemergotech/trace-go"
-	"gitlab.com/proemergotech/trace-go/internal"
+	"gitlab.com/proemergotech/trace-go/v2"
+	"gitlab.com/proemergotech/trace-go/v2/internal"
 )
 
 type settings struct {

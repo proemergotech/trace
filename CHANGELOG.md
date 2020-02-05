@@ -1,9 +1,11 @@
 # Release Notes
 
+## v2.0.1 / 2020-02-05
+- fix imports
+
 ## v2.0.0 / 2020-02-05
 - update geb client to v2
 - release version v2.0.0
-
 
 ## v1.0.0 / 2020-01-07
 - release version v1.0.0

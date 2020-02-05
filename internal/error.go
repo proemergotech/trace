@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"gitlab.com/proemergotech/trace-go"
+	"gitlab.com/proemergotech/trace-go/v2"
 )
 
 const (
