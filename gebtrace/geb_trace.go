@@ -4,7 +4,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/pkg/errors"
-	"gitlab.com/proemergotech/geb-client-go/geb"
+	"gitlab.com/proemergotech/geb-client-go/v2/geb"
 	"gitlab.com/proemergotech/trace-go"
 	"gitlab.com/proemergotech/trace-go/internal"
 )
