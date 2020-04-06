@@ -59,6 +59,7 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 
 			// no parent trace, but no need to start, so just ignore tracing at all
 			if err != nil && s.trace == trace.Ignore {
+				eCtx.SetRequest(req.WithContext(ctx))
 				return next(eCtx)
 			}
 
