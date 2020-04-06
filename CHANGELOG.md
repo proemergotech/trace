@@ -1,5 +1,8 @@
 # Release Notes
 
+## v2.0.2 / 2020-04-06
+- fix echo trace, add correlation to context even if trace.Ignore is set
+
 ## v2.0.1 / 2020-02-05
 - fix imports
 
