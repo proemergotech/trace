@@ -21,7 +21,15 @@ type Option func(*settings)
 // If there's no parent context, it will start a new root span and adds the 'span.missing' tag to the span.
 // It will also add correlation related tags.
 // If an error happens or one of the middleware panics, it will mark the span as failed and continue panicking.
-func PublishMiddleware(tracer opentracing.Tracer, logger trace.Logger) geb.Middleware {
+func PublishMiddleware(tracer opentracing.Tracer, logger trace.Logger, options ...Option) geb.Middleware {
+	s := &settings{
+		trace: trace.StartWithWarning,
+	}
+
+	for _, opt := range options {
+		opt(s)
+	}
+
 	return func(e *geb.Event, next func(*geb.Event) error) (err error) {
 		ctx := e.Context()
 		h := e.Headers()
@@ -36,17 +44,24 @@ func PublishMiddleware(tracer opentracing.Tracer, logger trace.Logger) geb.Middl
 
 		h[trace.CorrelationIDField] = cor.CorrelationID
 		h[trace.WorkflowIDField] = cor.WorkflowID
+		e.SetHeaders(h)
 
 		msg := "GEB out:" + e.EventName()
 		opts := []opentracing.StartSpanOption{ext.SpanKindProducer}
 		if parent := opentracing.SpanFromContext(ctx); parent == nil {
-			err := errors.New("No trace: " + msg)
-			logger.Error(ctx, err.Error(), "error", err)
+			if s.trace == trace.Ignore {
+				return next(e)
+			}
 
-			opts = append(opts, opentracing.Tag{
-				Key:   trace.SpanMissingTag,
-				Value: true,
-			})
+			if s.trace == trace.StartWithWarning {
+				err := errors.New("No trace: " + msg)
+				logger.Warn(ctx, err.Error(), "error", err)
+
+				opts = append(opts, opentracing.Tag{
+					Key:   trace.SpanMissingTag,
+					Value: true,
+				})
+			}
 		} else {
 			opts = append(opts, opentracing.ChildOf(parent.Context()))
 		}
@@ -66,7 +81,6 @@ func PublishMiddleware(tracer opentracing.Tracer, logger trace.Logger) geb.Middl
 			logger.Error(ctx, err.Error(), "error", err)
 		}
 
-		e.SetHeaders(h)
 		e.SetContext(ctx)
 
 		defer func() {
@@ -118,13 +132,15 @@ func OnEventMiddleware(tracer opentracing.Tracer, logger trace.Logger, options .
 		}
 		ctx = trace.WithCorrelation(ctx, cor)
 
+		opts := []opentracing.StartSpanOption{ext.SpanKindConsumer}
+		spanCtx, err := tracer.Extract(opentracing.TextMap, opentracing.TextMapCarrier(h))
+
 		// no parent trace, but no need to start, so just ignore tracing at all
 		if err != nil && s.trace == trace.Ignore {
+			e.SetContext(ctx)
 			return next(e)
 		}
 
-		opts := []opentracing.StartSpanOption{ext.SpanKindConsumer}
-		spanCtx, err := tracer.Extract(opentracing.TextMap, opentracing.TextMapCarrier(h))
 		if err == nil {
 			opts = append(opts, opentracing.FollowsFrom(spanCtx))
 		}
@@ -147,7 +163,6 @@ func OnEventMiddleware(tracer opentracing.Tracer, logger trace.Logger, options .
 
 		ctx = opentracing.ContextWithSpan(ctx, span)
 
-		e.SetHeaders(h)
 		e.SetContext(ctx)
 
 		defer func() {
