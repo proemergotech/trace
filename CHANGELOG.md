@@ -1,5 +1,9 @@
 # Release Notes
 
+## v2.1.0 / 2020-09-08
+- add options support to geb publish middleware
+- in geb trace handle correlation id correctly even when trace is ignored
+
 ## v2.0.2 / 2020-04-06
 - fix echo trace, add correlation to context even if trace.Ignore is set
 
