@@ -6,11 +6,12 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/pkg/errors"
-	"gitlab.com/proemergotech/trace-go/v2"
-	"gitlab.com/proemergotech/trace-go/v2/internal"
 	"gopkg.in/h2non/gentleman.v2"
 	gcontext "gopkg.in/h2non/gentleman.v2/context"
 	"gopkg.in/h2non/gentleman.v2/plugin"
+
+	"github.com/proemergotech/trace/v2"
+	"github.com/proemergotech/trace/v2/internal"
 )
 
 type settings struct {

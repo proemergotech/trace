@@ -1,12 +1,11 @@
 package internal
 
 import (
-	"gitlab.com/proemergotech/trace-go/v2"
+	"github.com/proemergotech/trace/v2"
 )
 
 const (
 	MissingFromContext = "correlation is missing from context"
-	MissingGebHeader   = "'" + trace.CorrelationIDField + "'" + " header is missing"
 	missingHttpHeader  = "'" + trace.CorrelationIDHeader + "'" + " header is missing"
 	fieldPrefix        = "trace_"
 )

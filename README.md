@@ -1,6 +1,6 @@
-# Trace package for the dliver system
+# Trace package for our systems
 
-Trace packages for the different frameworks we use in dliver.
+Trace packages for the different frameworks we use in our systems.
 
 ## Installation
 
@@ -8,7 +8,7 @@ Trace packages for the different frameworks we use in dliver.
 2. Run go build/run/tidy
 
 ```bash
-go get -u gitlab.com/proemergotech/trace-go v0.3.0
+go get -u github.com/proemergotech/trace v0.3.0
 ```
 
 ## Error logging
@@ -31,17 +31,7 @@ the nested errors and their fields will be logged too.
     }
 ```
 
-## Documentation
-
-Private repos don't show up on godoc.org so you have to run it locally.
-
-```
-godoc -http=":6060"
-```
-
-Then open http://localhost:6060/pkg/gitlab.com/proemergotech/trace-go/
-
 ## Development
 
 - install go
-- check out project to: $GOPATH/src/gitlab.com/proemergotech/trace-go
+- check out project to: $GOPATH/src/github.com/proemergotech/trace

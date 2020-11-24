@@ -7,8 +7,9 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/pkg/errors"
-	"gitlab.com/proemergotech/trace-go/v2"
-	"gitlab.com/proemergotech/trace-go/v2/internal"
+
+	"github.com/proemergotech/trace/v2"
+	"github.com/proemergotech/trace/v2/internal"
 )
 
 type settings struct {
