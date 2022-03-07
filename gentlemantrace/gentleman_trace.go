@@ -2,6 +2,7 @@ package gentlemantrace
 
 import (
 	"context"
+	"time"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -70,6 +71,19 @@ func Middleware(tracer opentracing.Tracer, logger trace.Logger, options ...Optio
 			})
 		} else {
 			opts = append(opts, opentracing.ChildOf(parent.Context()))
+		}
+
+		if d, ok := ctx.Deadline(); ok {
+			opts = append(opts, opentracing.Tags{
+				trace.ContextDeadlineExistsTag:   true,
+				trace.ContextDeadlineTag:         d.UTC().Round(time.Microsecond).Format(time.RFC3339Nano),
+				trace.ContextDeadlineDurationTag: d.UTC().Sub(time.Now().UTC()).String(),
+			})
+		} else {
+			opts = append(opts, opentracing.Tag{
+				Key:   trace.ContextDeadlineExistsTag,
+				Value: false,
+			})
 		}
 
 		span := tracer.StartSpan(

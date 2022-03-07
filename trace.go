@@ -11,14 +11,17 @@ import (
 )
 
 const (
-	CorrelationIDHeader  = "X-Correlation-Id"
-	WorkflowIDHeader     = "X-Workflow-Id"
-	CorrelationIDField   = "x_correlation_id"
-	CorrelationIDMissing = "x_correlation_id.missing"
-	WorkflowIDField      = "x_workflow_id"
-	WorkflowIDMissing    = "x_workflow_id.missing"
-	SpanMissingTag       = "span.missing"
-	StartIgnoredTag      = "start.ignored"
+	CorrelationIDHeader        = "X-Correlation-Id"
+	WorkflowIDHeader           = "X-Workflow-Id"
+	CorrelationIDField         = "x_correlation_id"
+	CorrelationIDMissing       = "x_correlation_id.missing"
+	WorkflowIDField            = "x_workflow_id"
+	WorkflowIDMissing          = "x_workflow_id.missing"
+	SpanMissingTag             = "span.missing"
+	StartIgnoredTag            = "start.ignored"
+	ContextDeadlineTag         = "context_deadline"
+	ContextDeadlineDurationTag = "context_deadline_duration"
+	ContextDeadlineExistsTag   = "context_deadline_exists"
 )
 
 const (

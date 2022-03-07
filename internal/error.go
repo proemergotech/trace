@@ -6,7 +6,8 @@ import (
 
 const (
 	MissingFromContext = "correlation is missing from context"
-	missingHttpHeader  = "'" + trace.CorrelationIDHeader + "'" + " header is missing"
+	MissingGebHeader   = "'" + trace.CorrelationIDField + "'" + " header is missing"
+	missingHTTPHeader  = "'" + trace.CorrelationIDHeader + "'" + " header is missing"
 	fieldPrefix        = "trace_"
 )
 
@@ -22,7 +23,7 @@ type Error struct {
 func CorrelationIDMissing() *HTTPError {
 	return &HTTPError{
 		Error: Error{
-			Message: missingHttpHeader,
+			Message: missingHTTPHeader,
 			Code:    "ERR_CORRELATION_ID_MISSING",
 		},
 	}
