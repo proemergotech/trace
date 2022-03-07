@@ -1,7 +1,11 @@
 # Release Notes
 
-## v2.1.1 / 2020-11-24
-- migrated to GitHub
+## v2.3.0 / 2022-03-07
+- sync with gitlab
+- update go version
+
+## v2.2.0 / 2020-12-02
+- add context deadline to gentleman and geb traces
 
 ## v2.1.0 / 2020-09-08
 - add options support to geb publish middleware
